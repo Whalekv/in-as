@@ -1,6 +1,32 @@
-const COZE_API_URL = 'https://api.coze.cn/v3/chat?conversation_id=7442211537055678499'
+const COZE_API_CREATCONVERSATION_URL = 'https://api.coze.cn/v1/conversation/create'
 const COZE_KEY = 'pat_7fkzMiEFmB0gcEjrFiM6Exa2O317TsmgWDoq0lbjr7dre3zDGCIihARO2Lp64XEJ'
 const BOT_ID = '7442210806965813258'
+
+//创建会话接口
+export async function createConversation() {
+  try {
+    const response = await fetch(COZE_API_CREATCONVERSATION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${COZE_KEY}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`API1调用失败: ${response.status}`)
+    }
+    const data = await response.json()
+    const id = data.data.id
+    console.log('返回的会话ID:', id)
+    console.log('API1响应状态:', response.status)
+    return id
+  } catch (error) {
+    console.error('Coze API1调用错误:', error)
+    throw error
+  }
+}
+
+const COZE_API_URL = `https://api.coze.cn/v3/chat?conversation_id=7442211537055678499`
 
 export async function chatWithCoze(message, onChunk) {
   try {
@@ -26,10 +52,10 @@ export async function chatWithCoze(message, onChunk) {
     })
 
     if (!response.ok) {
-      throw new Error(`API调用失败: ${response.status}`)
+      throw new Error(`API2调用失败: ${response.status}`)
     }
 
-    console.log('API响应状态:', response.status)
+    console.log('API2响应状态:', response.status)
 
     const reader = response.body.getReader()
     const decoder = new TextDecoder()

@@ -4,7 +4,6 @@ import { useUserSentMessagesStore } from '../stores/userSentMessages'
 const userSentMessagesStore = useUserSentMessagesStore()
 const handleSent = async () => {
   if (!userSentMessagesStore.userMessage.trim()) return
-
   console.log('用户输入的内容', userSentMessagesStore.userMessage)
   await userSentMessagesStore.addUserMessage(userSentMessagesStore.userMessage)
 }

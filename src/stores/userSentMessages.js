@@ -1,10 +1,46 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { chatWithCoze } from '../services/coze-service'
+import { chatWithCoze, createConversation } from '../services/coze-service'
 
 export const useUserSentMessagesStore = defineStore('userSentMessages', () => {
   const messages = ref([])
   const userMessage = ref('')
+  const chatHistory = ref([
+    {
+      id: 1,
+      title: '对话1',
+      messages: [],
+      lastMessage: '这是最后一条消息',
+      timestamp: '2024-01-21 12:00',
+    },
+  ])
+  const currentChatId = ref(1)
+  var conversation_id = ref('')
+  function createNewChat() {
+    conversation_id.value = createConversation() //??????????????????????????返回值有对于的数据
+    const newChat = {
+      id: Date.now(),
+      title: `对话${chatHistory.value.length + 1}`,
+      messages: [],
+      lastMessage: '',
+      timestamp: new Date().toLocaleString,
+    }
+    chatHistory.value.push(newChat)
+    currentChatId.value = newChat.id
+    messages.value = []
+    console.log('Date.now()', Date.now())
+    console.log('conversation_id', conversation_id.value)
+  }
+
+  console.log('conversation_id', conversation_id)
+
+  function switchChat(chatId) {
+    currentChatId.value = chatId
+    const chat = chatHistory.value.find((c) => c.id === chatId)
+    if (chat) {
+      messages.value = chat.messages
+    }
+  }
 
   async function addUserMessage(message) {
     // 先保存消息内容
@@ -12,12 +48,12 @@ export const useUserSentMessagesStore = defineStore('userSentMessages', () => {
     // 立即清空输入框
     userMessage.value = ''
 
-    // 添加用户消息
-    messages.value.push({
+    const newUserMessage = {
       type: 'user',
       content: currentMessage,
       content_type: 'text',
-    })
+    }
+    messages.value.push(newUserMessage)
 
     try {
       // 准备 AI 消息
@@ -55,5 +91,9 @@ export const useUserSentMessagesStore = defineStore('userSentMessages', () => {
     messages,
     userMessage,
     addUserMessage,
+    chatHistory,
+    currentChatId,
+    createNewChat,
+    switchChat,
   }
 })
