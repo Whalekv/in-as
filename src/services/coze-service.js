@@ -1,3 +1,5 @@
+import { ref, computed } from 'vue'
+
 const COZE_API_CREATCONVERSATION_URL = 'https://api.coze.cn/v1/conversation/create'
 const COZE_KEY = 'pat_7fkzMiEFmB0gcEjrFiM6Exa2O317TsmgWDoq0lbjr7dre3zDGCIihARO2Lp64XEJ'
 const BOT_ID = '7442210806965813258'
@@ -16,21 +18,29 @@ export async function createConversation() {
       throw new Error(`API1调用失败: ${response.status}`)
     }
     const data = await response.json()
-    const id = data.data.id
-    console.log('返回的会话ID:', id)
+    conversation_id.value = data.data.id
+    console.log('返回的会话ID:', conversation_id.value)
     console.log('API1响应状态:', response.status)
-    return id
+    return conversation_id.value
   } catch (error) {
     console.error('Coze API1调用错误:', error)
     throw error
   }
 }
 
-const COZE_API_URL = `https://api.coze.cn/v3/chat?conversation_id=7442211537055678499`
+// 将 conversation_id 改为导出变量
+export const conversation_id = ref('')
+
+// 修改 COZE_API_URL 为计算属性
+export const COZE_API_URL = computed(
+  () => `https://api.coze.cn/v3/chat?conversation_id=${conversation_id.value}`,
+)
+
+console.log('conversation_id.value11', conversation_id.value)
 
 export async function chatWithCoze(message, onChunk) {
   try {
-    const response = await fetch(COZE_API_URL, {
+    const response = await fetch(COZE_API_URL.value, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

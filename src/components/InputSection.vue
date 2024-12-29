@@ -34,6 +34,9 @@ const handleSent = async () => {
   display: flex;
   height: 100%;
 }
+.el-input {
+  resize: none; /* 禁止用户调整大小 */
+}
 .search-box {
   float: left;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);

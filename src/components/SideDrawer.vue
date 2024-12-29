@@ -5,10 +5,11 @@ import { useUserSentMessagesStore } from '../stores/userSentMessages'
 const drawer = ref(false)
 const store = useUserSentMessagesStore()
 
-const handleNewChat = () => {
-  store.createNewChat()
+const handleNewChat = async () => {
+  await store.createNewChat()
 }
 const handleChatSelect = (chatId) => {
+  console.log('chat.id1=', chatId)
   store.switchChat(chatId)
 }
 </script>
